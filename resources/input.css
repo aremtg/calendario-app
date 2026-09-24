@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@source "../public/index.php";
+@source "../public/login.php";
+@source "../public/assets/app.js";
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('./fonts/bricolage-grotesque-latin-wght-normal.woff2') format('woff2');
+}
+
+/* Footer con fondo animado suave */
+.footer-aura {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #14453D, #1d5c51, #16524a, #14453D);
+  background-size: 250% 250%;
+  animation: aura-shift 16s ease-in-out infinite;
+}
+.footer-aura::before,
+.footer-aura::after {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  pointer-events: none;
+}
+.footer-aura::before {
+  width: 18rem; height: 18rem; left: -4rem; top: -8rem;
+  background: rgba(232, 163, 23, .28);
+  animation: aura-drift 18s ease-in-out infinite;
+}
+.footer-aura::after {
+  width: 16rem; height: 16rem; right: -3rem; bottom: -9rem;
+  background: rgba(238, 242, 238, .18);
+  animation: aura-drift 22s ease-in-out infinite reverse;
+}
+@keyframes aura-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes aura-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, 24px) scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-aura, .footer-aura::before, .footer-aura::after { animation: none; }
+}
