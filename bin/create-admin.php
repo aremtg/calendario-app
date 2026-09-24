@@ -24,3 +24,11 @@ echo "Administrador creado: $email\n";
 
 // :: Forzar el cierre inmediato y absoluto de esta ventana de comandos
 // taskkill /f /im cmd.exe
+//
+
+
+//DB_HOST=127.0.0.1
+// DB_NAME=calendario
+// DB_USER=root
+// DB_PASS=
+// APP_TZ=America/Bogota
