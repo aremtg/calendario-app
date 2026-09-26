@@ -16,6 +16,19 @@ function db(): PDO {
     );
 }
 function e(mixed $s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+
+function icon(string $name, string $class = ''): string {
+    static $cache = [];
+    $path = __DIR__ . '/../public/assets/icons/' . basename($name) . '.svg';
+    if (!isset($cache[$path])) {
+        $cache[$path] = is_file($path) ? file_get_contents($path) : '<!-- ícono no encontrado: ' . e($name) . ' -->';
+    }
+    $svg = $cache[$path];
+    if ($class !== '') {
+        $svg = preg_replace('/^<svg /', '<svg class="' . e($class) . '" ', $svg, 1);
+    }
+    return $svg;
+}
 function require_admin(bool $json = false): array {
     $u = $_SESSION['user'] ?? null;
     if (!$u || ($u['role'] ?? '') !== 'admin') {

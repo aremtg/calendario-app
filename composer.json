@@ -1,6 +1,17 @@
 {
   "name": "local/calendario-app",
   "description": "Calendario de planes con panel de administrador",
-  "require": { "php": ">=8.1", "vlucas/phpdotenv": "^5.6" },
-  "scripts": { "start": "php -S localhost:8000 -t public" }
+  "require": {
+    "php": ">=8.1",
+    "vlucas/phpdotenv": "^5.6",
+    "phpoffice/phpspreadsheet": "^5.10"
+  },
+  "scripts": {
+    "start": "php -S localhost:8000 -t public"
+  },
+  "extra": {
+    "composer-audit": {
+      "abandoned": "report"
+    }
+  }
 }

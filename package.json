@@ -12,7 +12,7 @@
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
     "@tailwindcss/cli": "^4.3.3",
-    "lucide-static": "^1.47.0",
+    "lucide-static": "^1.48.0",
     "tailwindcss": "^4.3.3"
   }
 }

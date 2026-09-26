@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($u && password_verify($_POST['password'] ?? '', $u['password_hash'])) {
             session_regenerate_id(true);
             $_SESSION['csrf'] = bin2hex(random_bytes(32));
-            $_SESSION['user'] = ['id' => (int)$u['id'], 'name' => $u['name'], 'role' => $u['role']];
+          $_SESSION['user'] = ['id' => (int)$u['id'], 'name' => $u['name'], 'role' => $u['role']];
             header('Location: index.php'); exit;
         }
         $error = 'Correo o contraseña incorrectos.';

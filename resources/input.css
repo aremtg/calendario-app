@@ -46,6 +46,7 @@
   0%, 100% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(60px, 24px) scale(1.15); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .footer-aura, .footer-aura::before, .footer-aura::after { animation: none; }
+@media (max-width: 480px) {
+  .footer-aura::before { width: 10rem; height: 10rem; left: -2rem; top: -4rem; }
+  .footer-aura::after  { width: 9rem; height: 9rem; right: -1.5rem; bottom: -5rem; }
 }
