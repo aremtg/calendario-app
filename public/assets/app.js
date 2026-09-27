@@ -135,8 +135,8 @@ function renderCalendar() {
     html += `<button data-date="${date}" class="aspect-square rounded-2xl flex flex-col items-center justify-center text-sm font-semibold transition
   ${isHit ? "bg-[#FEF2F2] text-[#ff0000] ring-1 ring-[#FECACA] shadow-sm" : isSel ? "bg-[#ff0000] text-white shadow-sm" : "hover:bg-[#F9FAFB]"}
   ${isToday && !isSel && !isHit ? "ring-2 ring-amber-400" : ""}">
-      ${d}<span class="flex gap-0.5 mt-1 h-1.5">
-      ${pending ? `<i class="h-1.5 w-1.5 rounded-full bg-amber-400"></i>` : ""}${done ? `<i class="h-1.5 w-1.5 rounded-full bg-emerald-500"></i>` : ""}</span></button>`;
+      ${d}<span class="flex gap-0.5 mt-1 h-3">
+      ${pending ? `<i class="h-3 w-3 rounded-full bg-amber-400"></i>` : ""}${done ? `<i class="h-3 w-3 rounded-full bg-emerald-500"></i>` : ""}</span></button>`;
   }
   $("#grid").innerHTML = html;
   saveState();
