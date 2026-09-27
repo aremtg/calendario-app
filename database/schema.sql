@@ -126,9 +126,11 @@ CREATE TABLE IF NOT EXISTS instructores (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   nombre VARCHAR(160) NOT NULL,
+  cedula VARCHAR(40) NULL,
   cargo VARCHAR(160) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_instructores_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT fk_instructores_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_instructores_user_cedula (user_id, cedula)
 );
 
 CREATE TABLE IF NOT EXISTS cursos (
@@ -136,7 +138,8 @@ CREATE TABLE IF NOT EXISTS cursos (
   user_id INT NOT NULL,
   nombre VARCHAR(160) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_cursos_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT fk_cursos_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_cursos_user_nombre (user_id, nombre)
 );
 
 ALTER TABLE plans

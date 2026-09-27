@@ -17,66 +17,86 @@ $user = require_admin();
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col bg-[#EEF2EE] text-[#16211F]">
+<body class="min-h-screen flex flex-col bg-[#F9FAFB] text-[#1F2937]">
   <header class="px-4 pt-6 flex flex-wrap items-center justify-between gap-y-3">
-    <h1 class="text-3xl font-extrabold text-[#14453D]">Calendario</h1>
+    <h1 class="text-3xl font-extrabold text-white">Calendario Planeador ACBOCOL</h1>
     <div class="relative hidden md:block flex-1 max-w-xs mx-6">
       <input id="searchInput" type="text" placeholder="Buscar curso, instructor, fecha…"
-        class="w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14453D]">
+        class="w-full rounded-full border border-slate-200 bg-white pl-9 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff0000]">
       <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><?= icon('search', 'h-4 w-4') ?></span>
+      <button id="searchClear" type="button" aria-label="Borrar búsqueda" title="Borrar búsqueda"
+        class="absolute right-2 top-1/2 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-100"
+        tabindex="-1">
+        <?= icon('x', 'h-4 w-4') ?>
+      </button>
+      <div id="searchNavigator" class="hidden absolute z-10 left-0 right-0 top-full mt-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-lg">
+        <div class="flex items-center justify-between gap-2">
+          <span id="searchCount" class="text-xs font-semibold text-slate-600">0 coincidencias</span>
+          <div class="flex items-center gap-1">
+            <button id="searchPrev" type="button" aria-label="Coincidencia anterior" title="Coincidencia anterior"
+              class="grid h-7 w-7 place-items-center rounded-full text-slate-600 hover:bg-[#F9FAFB] disabled:opacity-30 disabled:cursor-not-allowed">
+              &#8592;
+            </button>
+            <button id="searchNext" type="button" aria-label="Siguiente coincidencia" title="Siguiente coincidencia"
+              class="grid h-7 w-7 place-items-center rounded-full text-slate-600 hover:bg-[#F9FAFB] disabled:opacity-30 disabled:cursor-not-allowed">
+              &#8594;
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="flex items-center gap-2 sm:gap-3 text-sm">
 
       <div class="relative">
         <button id="settingsBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Configuración"
-          class="grid h-11 w-11 place-items-center rounded-full bg-white text-[#14453D] shadow hover:shadow-md transition">
+          class="grid h-11 w-11 place-items-center rounded-full bg-white text-[#ff0000] shadow hover:shadow-md transition">
           <?= icon('settings', 'h-5 w-5') ?>
         </button>
       </div>
       <div class="relative">
         <button id="bellBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Notificaciones"
-          class="relative grid h-11 w-11 place-items-center rounded-full bg-white text-[#14453D] shadow hover:shadow-md transition">
+          class="relative grid h-11 w-11 place-items-center rounded-full bg-white text-[#ff0000] shadow hover:shadow-md transition">
 
           <!-- Ícono bell de Lucide -->
           <?= icon('bell', 'h-[22px] w-[22px]') ?>
           <span id="bellBadge"
-            class="hidden absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-amber-400 text-center text-[11px] font-bold leading-5 text-[#16211F]"></span>
+            class="hidden absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-amber-400 text-center text-[11px] font-bold leading-5 text-[#1F2937]"></span>
         </button>
 
         <div id="bellPanel"
           class="hidden absolute right-0 z-40 mt-3 w-80 sm:w-96 max-h-[70vh] overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-black/5">
           <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
             <h2 class="font-extrabold">Notificaciones</h2>
-            <button id="btnNotif" type="button" class="text-xs font-semibold text-[#14453D] hover:underline">Activar
+            <button id="btnNotif" type="button" class="text-xs font-semibold text-[#ff0000] hover:underline">Activar
               avisos del navegador</button>
           </div>
           <ul id="dueList" class="divide-y divide-slate-100"></ul>
         </div>
       </div>
-      <span class="hidden sm:inline text-slate-500"><?= e($user['name']) ?></span>
-      <a href="logout.php" class="rounded-full bg-[#14453D] text-white px-4 py-1.5">Salir</a>
+      <span class="hidden sm:inline text-white"><?= e($user['name']) ?></span>
+      <a href="logout.php" class="rounded-full bg-[#ff0000] text-white px-4 py-1.5">Salir</a>
     </div>
   </header>
 
-  <main class="max-w-6xl w-full flex-1 mx-auto px-4 py-6 space-y-5">
+  <main class="main-calendar w-full flex-1 px-4 py-6 space-y-5">
 
 
-    <div class="grid lg:grid-cols-[1fr_380px] gap-5">
+  <div class="mx-auto w-full max-w-6xl grid lg:grid-cols-[minmax(0,1fr)_400px] gap-5 xl:gap-6">
       <section class="bg-white rounded-3xl shadow-lg p-5 sm:p-7">
         <div class="flex justify-end mb-3">
           <button id="btnToday" type="button"
-            class="rounded-full border border-[#14453D]/30 px-3 py-1 text-xs font-semibold text-[#14453D] hover:bg-[#EEF2EE]">Este
+            class="rounded-full border border-[#ff0000]/30 px-3 py-1 text-xs font-semibold text-[#ff0000] hover:bg-[#F9FAFB]">Este
             mes</button>
         </div>
         <div class="flex flex-wrap justify-end gap-2 mb-4">
           <a id="exportYear" href="#"
-            class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white shadow hover:brightness-105 transition"
-            style="background: linear-gradient(135deg, #217346 0%, #217346 50%, #C0392B 50%, #C0392B 100%);">
+            class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 transition"
+            >
             <?= icon('download', 'h-[15px] w-[15px]') ?>
             Exportar año <span id="exportYearLabel"></span>
           </a>
           <a id="exportMonth" href="#"
-            class="inline-flex items-center gap-2 rounded-full bg-[#217346] px-4 py-2 text-xs font-semibold text-white shadow hover:brightness-105 transition">
+            class="inline-flex items-center gap-2 rounded-full bg-red-600 hover:bg-red-700 px-4 py-2 text-xs font-semibold text-white shadow hover:brightness-105 transition">
             <?= icon('download', 'h-[15px] w-[15px]') ?>
             Exportar este mes
           </a>
@@ -111,7 +131,7 @@ $user = require_admin();
             <h3 id="dayTitle" class="text-xl font-extrabold capitalize"></h3>
           </div>
           <button id="btnAdd"
-            class="rounded-full bg-[#14453D] text-white text-sm font-semibold px-4 py-2 hover:bg-[#0f352f]">Agregar
+            class="rounded-full bg-[#ff0000] text-white text-sm font-semibold px-4 py-2 hover:bg-[#cc0000]">Agregar
             plan</button>
         </div>
         <ul id="dayList" class="mt-5 space-y-3 max-h-[55vh] overflow-y-auto pr-1"></ul>
@@ -119,14 +139,14 @@ $user = require_admin();
     </div>
   </main>
 
-  <footer class="footer-aura mt-8 w-full text-[#EEF2EE]">
+  <footer class="bg-[#934721] w-full text-[#F9FAFB]">
     <div
       class="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-center text-sm sm:flex-row sm:text-left sm:gap-3 sm:py-7">
       <p class="flex items-center gap-2 font-semibold">
         Creado por Tatiana Guzman
         <?= icon('heart', 'h-4 w-4 text-amber-300') ?>
       </p>
-      <p class="text-[#EEF2EE]/70">Calendario de planes · <?= date('Y') ?></p>
+      <p class="text-[#F9FAFB]/70">Calendario de planes · <?= date('Y') ?></p>
     </div>
   </footer>
 
@@ -137,19 +157,19 @@ $user = require_admin();
       <input type="hidden" name="plan_date">
       <input type="hidden" name="curso_id">
 
-      <div class="flex items-center justify-between rounded-xl bg-[#EEF2EE] px-4 py-2.5 text-sm">
-        <span class="flex items-center gap-2 font-semibold text-[#14453D]">
+      <div class="flex items-center justify-between rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm">
+        <span class="flex items-center gap-2 font-semibold text-[#ff0000]">
           <?= icon('calendar-days', 'h-4 w-4') ?>
           <span id="formDateLabel"></span>
         </span>
-        <button type="button" id="btnChangeDate" class="text-xs font-semibold text-[#14453D] underline">Cambiar
+        <button type="button" id="btnChangeDate" class="text-xs font-semibold text-[#ff0000] underline">Cambiar
           día</button>
       </div>
       <input name="plan_date_visible" type="date" class="hidden w-full rounded-xl border border-slate-200 px-3 py-2.5">
 
       <label class="block text-sm font-semibold">Título o curso
         <input name="title" list="cursosList" required maxlength="160" autocomplete="off"
-          class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14453D]">
+          class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#ff0000]">
         <datalist id="cursosList"></datalist>
       </label>
 
@@ -161,7 +181,7 @@ $user = require_admin();
           <input name="plan_time_end" type="time"
             class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"></label>
       </div>
-      <p id="durationLabel" class="text-xs font-semibold text-[#14453D]"></p>
+      <p id="durationLabel" class="text-xs font-semibold text-[#ff0000]"></p>
 
       <div class="grid grid-cols-2 gap-3">
         <label class="block text-sm font-semibold">Lugar
@@ -179,7 +199,7 @@ $user = require_admin();
           class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5"></textarea></label>
 
       <div class="rounded-xl bg-amber-50 p-3 flex items-center gap-3 text-sm">
-        <input id="alarm" name="alarm_enabled" type="checkbox" class="h-4 w-4 accent-[#14453D]">
+        <input id="alarm" name="alarm_enabled" type="checkbox" class="h-4 w-4 accent-[#ff0000]">
         <label for="alarm" class="font-semibold">Alarma: avisar</label>
         <input name="alarm_days" type="number" min="1" max="365" value="30"
           class="w-16 rounded-lg border border-slate-200 px-2 py-1">
@@ -188,7 +208,7 @@ $user = require_admin();
       <p id="formError" class="hidden text-sm text-red-700"></p>
       <div class="flex justify-end gap-2">
         <button type="button" id="btnCancel" class="rounded-full px-4 py-2 hover:bg-slate-100">Cancelar</button>
-        <button class="rounded-full bg-[#14453D] text-white font-semibold px-5 py-2">Guardar plan</button>
+        <button class="rounded-full bg-[#ff0000] text-white font-semibold px-5 py-2">Guardar plan</button>
       </div>
     </form>
   </div>
@@ -205,7 +225,7 @@ $user = require_admin();
         </button>
       </div>
       <div class="flex gap-1 px-5 pt-3 text-xs font-semibold">
-        <button data-tab="backups" class="drawer-tab rounded-full px-3 py-1.5 bg-[#14453D] text-white">Copias</button>
+        <button data-tab="backups" class="drawer-tab rounded-full px-3 py-1.5 bg-[#ff0000] text-white">Copias</button>
         <button data-tab="lugares" class="drawer-tab rounded-full px-3 py-1.5 hover:bg-slate-100">Lugares</button>
         <button data-tab="instructores"
           class="drawer-tab rounded-full px-3 py-1.5 hover:bg-slate-100">Instructores</button>
@@ -214,11 +234,18 @@ $user = require_admin();
 
       <div class="flex-1 overflow-y-auto px-5 py-4">
         <div id="tabBackups">
-          <p class="text-xs text-slate-400 mb-3">Se guardan como máximo 5 copias. Al llegar al límite, la más antigua se
-            borra sola.</p>
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <p class="text-xs text-slate-400">
+              Se conservan como máximo 5 copias. Al llegar al límite, la más antigua se elimina automáticamente.
+            </p>
+            <button id="btnCreateBackup" type="button"
+              class="shrink-0 rounded-full bg-[#ff0000] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#cc0000]">
+              Crear copia
+            </button>
+          </div>
           <ul id="backupsList" class="space-y-2"></ul>
-          <div id="backupLogWrap" class="hidden mt-4 rounded-xl bg-[#EEF2EE] p-3">
-            <p class="text-xs font-semibold text-[#14453D] mb-1">Progreso</p>
+          <div id="backupLogWrap" class="hidden mt-4 rounded-xl bg-[#F9FAFB] p-3">
+            <p class="text-xs font-semibold text-[#ff0000] mb-1">Progreso</p>
             <ul id="backupLog" class="space-y-1 text-xs text-slate-600"></ul>
           </div>
         </div>
@@ -229,7 +256,7 @@ $user = require_admin();
               class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm">
             <input name="direccion" placeholder="Dirección"
               class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm">
-            <button class="rounded-lg bg-[#14453D] text-white px-3"><?= icon('plus', 'h-4 w-4') ?></button>
+            <button class="rounded-lg bg-[#ff0000] text-white px-3"><?= icon('plus', 'h-4 w-4') ?></button>
           </form>
           <ul id="listLugares" class="space-y-2"></ul>
         </div>
@@ -238,8 +265,10 @@ $user = require_admin();
           <form id="formInstructor" class="flex gap-2 mb-3">
             <input name="nombre" placeholder="Nombre" required
               class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <input name="cedula" placeholder="Cédula (opcional)" inputmode="numeric"
+              class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm">
             <input name="cargo" placeholder="Cargo" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm">
-            <button class="rounded-lg bg-[#14453D] text-white px-3"><?= icon('plus', 'h-4 w-4') ?></button>
+            <button class="rounded-lg bg-[#ff0000] text-white px-3"><?= icon('plus', 'h-4 w-4') ?></button>
           </form>
           <ul id="listInstructores" class="space-y-2"></ul>
         </div>
@@ -248,12 +277,63 @@ $user = require_admin();
           <form id="formCurso" class="flex gap-2 mb-3">
             <input name="nombre" placeholder="Nombre del curso" required
               class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm">
-            <button class="rounded-lg bg-[#14453D] text-white px-3"><?= icon('plus', 'h-4 w-4') ?></button>
+            <button class="rounded-lg bg-[#ff0000] text-white px-3"><?= icon('plus', 'h-4 w-4') ?></button>
           </form>
           <ul id="listCursos" class="space-y-2"></ul>
         </div>
       </div>
     </aside>
+  </div>
+
+
+  <!-- Modal para visualizar un plan sin entrar en modo edición -->
+  <div id="viewPlanModal" class="hidden fixed inset-0 bg-black/40 grid place-items-center p-4 z-50">
+    <section class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-[#ff0000]">Detalle del plan</p>
+          <h3 id="viewPlanTitle" class="text-2xl font-extrabold mt-1"></h3>
+        </div>
+        <button type="button" id="closeViewPlan" class="grid h-9 w-9 place-items-center rounded-full hover:bg-slate-100" aria-label="Cerrar">
+          <?= icon('x', 'h-[18px] w-[18px]') ?>
+        </button>
+      </div>
+      <div id="viewPlanContent" class="mt-5 space-y-3"></div>
+      <div class="mt-6 flex justify-end gap-2">
+        <button type="button" id="viewPlanCancel" class="rounded-full px-4 py-2 hover:bg-slate-100">Cerrar</button>
+        <button type="button" id="viewPlanDelete" class="rounded-full px-4 py-2 text-red-600 hover:bg-red-50">Eliminar</button>
+        <button type="button" id="viewPlanEdit" class="rounded-full bg-[#ff0000] text-white font-semibold px-5 py-2 hover:bg-[#cc0000]">Editar</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal reutilizable para editar lugares, instructores y cursos -->
+  <div id="catalogEditModal" class="hidden fixed inset-0 bg-black/40 grid place-items-center p-4 z-50">
+    <form id="catalogEditForm" class="w-full max-w-md bg-white rounded-3xl p-6 space-y-4 shadow-2xl">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-[#ff0000]">Catálogo</p>
+          <h3 id="catalogEditTitle" class="text-xl font-extrabold"></h3>
+        </div>
+        <button type="button" id="catalogEditClose" class="grid h-9 w-9 place-items-center rounded-full hover:bg-slate-100">
+          <?= icon('x', 'h-[18px] w-[18px]') ?>
+        </button>
+      </div>
+      <input type="hidden" name="id">
+      <input type="hidden" name="kind">
+      <label class="block text-sm font-semibold">Nombre
+        <input name="nombre" required maxlength="160" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5">
+      </label>
+      <label id="catalogEditExtraWrap" class="block text-sm font-semibold">
+        <span id="catalogEditExtraLabel">Dato adicional</span>
+        <input name="extra" maxlength="255" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5">
+      </label>
+      <p id="catalogEditError" class="hidden text-sm text-red-700"></p>
+      <div class="flex justify-end gap-2">
+        <button type="button" id="catalogEditCancel" class="rounded-full px-4 py-2 hover:bg-slate-100">Cancelar</button>
+        <button class="rounded-full bg-[#ff0000] text-white font-semibold px-5 py-2">Guardar cambios</button>
+      </div>
+    </form>
   </div>
 
   <script src="assets/app.js"></script>

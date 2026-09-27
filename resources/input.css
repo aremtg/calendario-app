@@ -12,41 +12,460 @@
   src: url('./fonts/bricolage-grotesque-latin-wght-normal.woff2') format('woff2');
 }
 
-/* Footer con fondo animado suave */
-.footer-aura {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(120deg, #14453D, #1d5c51, #16524a, #14453D);
-  background-size: 250% 250%;
-  animation: aura-shift 16s ease-in-out infinite;
+
+/* ============================================================
+   calendario Design System — Calendario
+   La tipografía original Bricolage Grotesque se conserva.
+   Esta capa adapta tamaños, colores, bordes, sombras y estados
+   al sistema visual institucional rojo de calendario.
+   ============================================================ */
+:root {
+  --calendario-red: #ff0000;
+  --calendario-red-dark: #B91C1C;
+  --calendario-red-soft: #FEF2F2;
+  --calendario-bg: #F9FAFB;
+  --calendario-surface: #FFFFFF;
+  --calendario-text: #1F2937;
+  --calendario-muted: #6B7280;
+  --calendario-border: #E5E7EB;
+  --calendario-border-light: #F3F4F6;
 }
-.footer-aura::before,
-.footer-aura::after {
-  content: '';
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(48px);
-  pointer-events: none;
+
+body {
+  background: var(--calendario-bg) !important;
+  color: var(--calendario-text) !important;
 }
-.footer-aura::before {
-  width: 18rem; height: 18rem; left: -4rem; top: -8rem;
-  background: rgba(232, 163, 23, .28);
-  animation: aura-drift 18s ease-in-out infinite;
+
+/* Superficies principales: cards y paneles */
+main section,
+main aside {
+  border: 1px solid var(--calendario-border) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04) !important;
 }
-.footer-aura::after {
-  width: 16rem; height: 16rem; right: -3rem; bottom: -9rem;
-  background: rgba(238, 242, 238, .18);
-  animation: aura-drift 22s ease-in-out infinite reverse;
+
+/* Botones principales */
+#btnAdd,
+#btnCreateBackup,
+#form button[type="submit"] {
+  background: var(--calendario-red) !important;
+  color: #fff !important;
+  border-radius: .5rem !important;
+  font-size: .875rem !important;
+  font-weight: 500 !important;
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-@keyframes aura-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+#btnAdd:hover,
+#btnCreateBackup:hover,
+#form button[type="submit"]:hover { background: var(--calendario-red-dark) !important; }
+
+/* Botones secundarios y de navegación */
+#btnToday,
+#prev,
+#next,
+#btnCancel,
+#btnChangeDate,
+#searchPrev,
+#searchNext,
+#closeBackups,
+#closeViewPlan,
+#viewPlanCancel {
+  border-radius: .5rem !important;
 }
-@keyframes aura-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(60px, 24px) scale(1.15); }
+
+#btnToday {
+  border-color: #FECACA !important;
+  color: var(--calendario-red) !important;
+  background: #fff !important;
 }
-@media (max-width: 480px) {
-  .footer-aura::before { width: 10rem; height: 10rem; left: -2rem; top: -4rem; }
-  .footer-aura::after  { width: 9rem; height: 9rem; right: -1.5rem; bottom: -5rem; }
+#btnToday:hover,
+#prev:hover,
+#next:hover,
+#btnCancel:hover,
+#searchPrev:hover,
+#searchNext:hover { background: #F9FAFB !important; }
+
+/* Icon buttons */
+#settingsBtn,
+#bellBtn {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  border: 1px solid var(--calendario-border) !important;
+  border-radius: .5rem !important;
+  color: var(--calendario-text) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04) !important;
+}
+#settingsBtn:hover,
+#bellBtn:hover { background: #F9FAFB !important; box-shadow: 0 2px 5px rgba(0,0,0,.06) !important; }
+
+/* Búsqueda */
+#searchInput {
+  height: 2.5rem !important;
+  border-radius: .75rem !important;
+  border-color: #D1D5DB !important;
+  color: var(--calendario-text) !important;
+}
+#searchInput:focus {
+  border-color: var(--calendario-red) !important;
+  box-shadow: 0 0 0 3px #FEE2E2 !important;
+  outline: none !important;
+}
+#searchNavigator {
+  border: 1px solid var(--calendario-border-light) !important;
+  border-radius: .75rem !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08) !important;
+}
+#searchCount { color: var(--calendario-muted) !important; }
+
+/* Calendario */
+#monthTitle {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: var(--calendario-text) !important;
+}
+#grid > button {
+  border-radius: .625rem !important;
+}
+#grid > button:hover {
+  background: var(--calendario-red-soft) !important;
+  color: var(--calendario-red) !important;
+}
+#grid > button.bg-\[\#ff0000\] {
+  background: var(--calendario-red) !important;
+  color: #fff !important;
+}
+
+/* Lista de planes */
+#dayList > li {
+  border-color: var(--calendario-border) !important;
+  border-radius: .75rem !important;
+  box-shadow: none !important;
+}
+#dayList > li:hover { border-color: #D1D5DB !important; }
+#dayList [data-act="view"],
+#dayList [data-act="edit"] {
+  color: #4B5563;
+  border-radius: .5rem !important;
+}
+#dayList [data-act="view"]:hover,
+#dayList [data-act="edit"]:hover { background: #F9FAFB !important; }
+#dayList [data-act="delete"] {
+  color: var(--calendario-red) !important;
+  border-radius: .5rem !important;
+}
+#dayList [data-act="delete"]:hover { background: var(--calendario-red-soft) !important; }
+
+/* Inputs, selects y textareas */
+input:not(#searchInput), select, textarea {
+  border-color: #D1D5DB !important;
+  border-radius: .5rem !important;
+  font-size: .875rem !important;
+}
+input:not(#searchInput):focus, select:focus, textarea:focus {
+  border-color: var(--calendario-red) !important;
+  box-shadow: 0 0 0 3px #FEE2E2 !important;
+  outline: none !important;
+}
+
+/* Modales */
+#modal,
+#viewPlanModal { background: rgba(0,0,0,.40) !important; }
+#form,
+#viewPlanModal > div {
+  border-radius: 1rem !important;
+  border: 1px solid var(--calendario-border) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,.12) !important;
+}
+#formTitle,
+#viewPlanTitle { font-size: 1.125rem !important; font-weight: 600 !important; color: var(--calendario-text) !important; }
+
+/* Drawer de configuración */
+#backupsDrawer {
+  border-left: 1px solid var(--calendario-border) !important;
+  box-shadow: -10px 0 30px rgba(0,0,0,.08) !important;
+}
+.drawer-tab {
+  border-radius: .5rem !important;
+  color: #4B5563 !important;
+}
+.drawer-tab:hover { background: #F9FAFB !important; }
+.drawer-tab.bg-\[\#ff0000\] {
+  background: var(--calendario-red) !important;
+  color: #fff !important;
+}
+
+/* Chips y estados */
+#monthChips button { border-radius: .5rem !important; }
+
+
+/* Interacciones consistentes */
+button, a, input, select, textarea { transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--calendario-red) !important;
+  outline-offset: 2px;
+}
+
+
+/* ============================================================
+   calendario UI/UX refinement — Red Professional / production pass
+   ============================================================ */
+:root {
+  --calendario-red: #ff0000;
+  --calendario-red-dark: #ff2727;
+  --calendario-red-deep: #c20101;
+  --calendario-red-soft: #FFF4F4;
+  --calendario-red-line: #F0CACA;
+  --calendario-bg: #F7F7F8;
+  --calendario-surface: #FFFFFF;
+  --calendario-text: #202124;
+  --calendario-muted: #70757A;
+  --calendario-border: #E3E5E8;
+  --calendario-shadow: 0 1px 2px rgba(18, 18, 18, .04), 0 8px 24px rgba(18, 18, 18, .055);
+}
+
+body { background: var(--calendario-bg) !important; }
+
+/* Header: compact app bar, not a marketing hero */
+header {
+  padding: 14px 20px !important;
+  min-height: 70px;
+  background: #F05B1E !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,.035) !important;
+}
+
+header .relative > button,
+#settingsBtn, #bellBtn {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--calendario-border) !important;
+  background: #fff !important;
+  color: var(--calendario-red) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.035) !important;
+}
+header .relative > button:hover,
+#settingsBtn:hover, #bellBtn:hover {
+  border-color: var(--calendario-red-line) !important;
+  background: var(--calendario-red-soft) !important;
+  box-shadow: 0 4px 12px rgba(198,40,40,.09) !important;
+}
+
+#searchInput {
+  height: 42px !important;
+  border-radius: 10px !important;
+  background: #FAFAFA !important;
+  border-color: var(--calendario-border) !important;
+}
+#searchInput:focus {
+  background: #fff !important;
+  border-color: var(--calendario-red) !important;
+  box-shadow: 0 0 0 3px rgba(198,40,40,.10) !important;
+}
+
+
+/* Main surfaces — restrained radius and layered shadow */
+main section, main aside {
+  border: 1px solid var(--calendario-border) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--calendario-shadow) !important;
+}
+main section { padding: 22px !important; }
+main aside { padding: 22px !important; }
+
+/* Desktop relationship: list gains ~20px while calendar contracts accordingly */
+@media (min-width: 1024px) {
+  main > div.grid { grid-template-columns: minmax(0, 1fr) 400px !important; }
+}
+@media (min-width: 1280px) {
+  main > div.grid { grid-template-columns: minmax(0, 1fr) 400px !important; }
+}
+
+/* Section hierarchy */
+#monthTitle {
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -.025em;
+}
+#dayTitle {
+  font-size: 1.12rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -.02em;
+}
+main aside > div > div > p,
+main aside p.text-sm { color: var(--calendario-muted) !important; }
+
+/* Primary actions */
+#btnAdd, #form button[type="submit"], #exportYear, #exportMonth {
+  background: var(--calendario-red) !important;
+  color: #fff !important;
+  border: 1px solid var(--calendario-red) !important;
+  border-radius: 9px !important;
+  box-shadow: 0 2px 5px rgba(198,40,40,.16) !important;
+  font-weight: 650 !important;
+}
+#btnAdd:hover, #form button[type="submit"]:hover, #exportYear:hover, #exportMonth:hover {
+  background: var(--calendario-red-dark) !important;
+  border-color: var(--calendario-red-dark) !important;
+  box-shadow: 0 5px 12px rgba(198,40,40,.18) !important;
+}
+#exportYear, #exportMonth { min-height: 38px; }
+
+/* Secondary controls share the exact same visual language */
+#btnToday, #prev, #next, #btnCancel, #btnChangeDate,
+#searchPrev, #searchNext, #closeBackups, #closeViewPlan, #viewPlanCancel {
+  border: 1px solid var(--calendario-border) !important;
+  background: #fff !important;
+  color: var(--calendario-text) !important;
+  border-radius: 9px !important;
+}
+#btnToday {
+  border-color: var(--calendario-red-line) !important;
+  color: var(--calendario-red) !important;
+  font-weight: 650 !important;
+}
+#btnToday:hover, #prev:hover, #next:hover, #btnCancel:hover,
+#searchPrev:hover, #searchNext:hover {
+  border-color: var(--calendario-red-line) !important;
+  background: var(--calendario-red-soft) !important;
+  color: var(--calendario-red) !important;
+}
+#prev, #next { width: 38px !important; height: 38px !important; }
+
+/* Calendar grid: cleaner cells, stronger current-day hierarchy */
+#grid { gap: 5px !important; }
+#grid > button {
+  min-height: 58px;
+  border: 1px solid transparent;
+  border-radius: 9px !important;
+  background: #fff;
+  color: #303236;
+  font-weight: 600;
+}
+#grid > button:hover {
+  border-color: var(--calendario-red-line) !important;
+  background: var(--calendario-red-soft) !important;
+  color: var(--calendario-red) !important;
+}
+#grid > button.bg-\[\#ff0000\],
+#grid > button[class*="bg-[#ff0000]"] {
+  background: var(--calendario-red) !important;
+  border-color: var(--calendario-red) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 8px rgba(198,40,40,.20) !important;
+}
+
+/* Month chips */
+#monthChips { gap: 6px !important; }
+#monthChips button {
+  min-height: 36px;
+  border: 1px solid var(--calendario-border) !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #55595F !important;
+  font-weight: 600 !important;
+}
+#monthChips button:hover {
+  border-color: var(--calendario-red-line) !important;
+  background: var(--calendario-red-soft) !important;
+  color: var(--calendario-red) !important;
+}
+
+/* Day list: wider, denser, premium card rhythm */
+#dayList { margin-top: 16px !important; }
+#dayList > li {
+  border: 1px solid var(--calendario-border) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.025) !important;
+  padding: 12px !important;
+}
+#dayList > li:hover {
+  border-color: var(--calendario-red-line) !important;
+  box-shadow: 0 5px 14px rgba(0,0,0,.055) !important;
+  transform: translateY(-1px);
+}
+#dayList [data-act="view"], #dayList [data-act="edit"] {
+  border: 1px solid var(--calendario-border) !important;
+  color: #55595F !important;
+  background: #fff !important;
+  border-radius: 8px !important;
+}
+#dayList [data-act="view"]:hover, #dayList [data-act="edit"]:hover {
+  border-color: var(--calendario-red-line) !important;
+  color: var(--calendario-red) !important;
+  background: var(--calendario-red-soft) !important;
+}
+#dayList [data-act="delete"] {
+  border: 1px solid #F2D0D0 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+}
+#dayList [data-act="delete"]:hover { background: var(--calendario-red-soft) !important; }
+
+/* Forms */
+input:not(#searchInput), select, textarea {
+  border: 1px solid #D7D9DD !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+}
+input:not(#searchInput):focus, select:focus, textarea:focus {
+  border-color: var(--calendario-red) !important;
+  box-shadow: 0 0 0 3px rgba(198,40,40,.10) !important;
+}
+
+/* Modal and drawer */
+#modal, #viewPlanModal { background: rgba(20,20,22,.46) !important; backdrop-filter: blur(2px); }
+#form, #viewPlanModal > div {
+  border: 1px solid var(--calendario-border) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,.18) !important;
+}
+#formTitle, #viewPlanTitle { font-weight: 700 !important; }
+#backupsDrawer {
+  border-left: 1px solid var(--calendario-border) !important;
+  box-shadow: -18px 0 45px rgba(0,0,0,.10) !important;
+}
+
+
+
+/* Consistent motion and focus */
+button, a, input, select, textarea { transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease !important; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--calendario-red) !important;
+  outline-offset: 2px;
+}
+
+@media (max-width: 1023px) {
+  main section, main aside { padding: 18px !important; }
+  #grid > button { min-height: 52px; }
+}
+@media (max-width: 640px) {
+  header { padding: 12px 14px !important; }
+  main { padding-left: 12px !important; padding-right: 12px !important; }
+  #grid > button { min-height: 46px; }
+}
+.main-calendar {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: transparent !important;
+}
+
+.main-calendar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image: url('/calendario-app/public/assets/img/calendario-fondo.svg');
+
+    background-repeat: no-repeat;
+
+    /* Centrado */
+    background-position: center center;
+
+    /* Cubre TODO el main sin deformar */
+    background-size: cover;
+
+    z-index: -1;
+    pointer-events: none;
 }

@@ -64,12 +64,16 @@ function backups_create(PDO $pdo): array
             $p['notes'] === null ? 'NULL' : $pdo->quote($p['notes']),
             $pdo->quote($p['plan_date']),
             $p['plan_time'] === null ? 'NULL' : $pdo->quote($p['plan_time']),
-            (int) $p['is_done'],
-            (int) $p['alarm_enabled'],
+            $p['plan_time_end'] === null ? 'NULL' : $pdo->quote($p['plan_time_end']),
+            $p['is_done'] ? 1 : 0,
+            $p['alarm_enabled'] ? 1 : 0,
             (int) $p['alarm_days'],
+            $p['lugar_id'] === null ? 'NULL' : (int)$p['lugar_id'],
+            $p['instructor_id'] === null ? 'NULL' : (int)$p['instructor_id'],
+            $p['curso_id'] === null ? 'NULL' : (int)$p['curso_id'],
             $pdo->quote($p['created_at'])
         ];
-        $lines[] = 'INSERT INTO plans (id, user_id, title, notes, plan_date, plan_time, is_done, alarm_enabled, alarm_days, created_at) VALUES (' . implode(', ', $vals) . ');';
+        $lines[] = 'INSERT INTO plans (id, user_id, title, notes, plan_date, plan_time, plan_time_end, is_done, alarm_enabled, alarm_days, lugar_id, instructor_id, curso_id, created_at) VALUES (' . implode(', ', $vals) . ');';
     }
 
     $name = 'backup_' . date('Ymd_His') . '.sql';
@@ -97,7 +101,20 @@ function backups_restore(PDO $pdo, string $name, int $uid): int
 
     preg_match_all('/^INSERT INTO plans \([^)]*\) VALUES \((.*)\);$/mi', file_get_contents($path), $m);
 
-    $insert = $pdo->prepare('INSERT INTO plans (user_id, title, notes, plan_date, plan_time, is_done, alarm_enabled, alarm_days, created_at)
+    /*
+     * Se insertan como planes del usuario que está restaurando la copia.
+     * Así una copia no puede crear planes bajo otro usuario.
+     *
+     * El formato nuevo contiene 14 valores. También aceptamos el formato
+     * antiguo de 10 valores para no romper copias creadas por versiones
+     * anteriores de la aplicación.
+     */
+    $insertNew = $pdo->prepare('INSERT INTO plans
+        (user_id, title, notes, plan_date, plan_time, plan_time_end, is_done, alarm_enabled, alarm_days, lugar_id, instructor_id, curso_id, created_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)');
+
+    $insertLegacy = $pdo->prepare('INSERT INTO plans
+        (user_id, title, notes, plan_date, plan_time, is_done, alarm_enabled, alarm_days, created_at)
         VALUES (?,?,?,?,?,?,?,?,?)');
 
     $count = 0;
@@ -105,16 +122,35 @@ function backups_restore(PDO $pdo, string $name, int $uid): int
     try {
         foreach ($m[1] as $tuple) {
             $f = backups_split_values($tuple);
-            if (count($f) < 10)
+
+            if (count($f) >= 14) {
+                $insertNew->execute([
+                    $uid, $f[2], $f[3], $f[4], $f[5], $f[6],
+                    (int)$f[7], (int)$f[8], (int)$f[9],
+                    $f[10] === null ? null : (int)$f[10],
+                    $f[11] === null ? null : (int)$f[11],
+                    $f[12] === null ? null : (int)$f[12],
+                    $f[13],
+                ]);
+                $count++;
                 continue;
-            $insert->execute([$uid, $f[2], $f[3], $f[4], $f[5], (int) $f[6], (int) $f[7], (int) $f[8], $f[9]]);
-            $count++;
+            }
+
+            if (count($f) >= 10) {
+                $insertLegacy->execute([
+                    $uid, $f[2], $f[3], $f[4], $f[5],
+                    (int)$f[6], (int)$f[7], (int)$f[8], $f[9]
+                ]);
+                $count++;
+            }
         }
+
         $pdo->commit();
     } catch (Throwable $e) {
         $pdo->rollBack();
         throw $e;
     }
+
     return $count;
 }
 
